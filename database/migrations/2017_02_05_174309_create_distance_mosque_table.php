@@ -23,7 +23,6 @@ class CreateDistanceMosqueTable extends Migration
             $table->integer('mosque_id')->unsigned();
             $table->foreign('mosque_id')->references('id')->on('mosques')->onDelete('cascade');
 
-            $table->timestamps();
             $table->softDeletes();
         });
     }

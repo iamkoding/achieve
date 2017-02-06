@@ -11,4 +11,4 @@
 |
 */
 
-Route::get('/', 'DistanceController@index');
+Route::get('/distance/{lat}/{lng}', 'DistanceController@index');
