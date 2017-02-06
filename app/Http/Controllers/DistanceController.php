@@ -15,7 +15,7 @@ class DistanceController extends Controller
 	{
 		$distances = \App\Distance::getWhereIp($r->ip());
 		if($distances->count()) {
-			return json_encode(array('success' => true, 'result' => $distances));
+			return json_encode(array('success' => true, 'message' => $distances));
 		}
 
 		try {
@@ -34,6 +34,6 @@ class DistanceController extends Controller
 
 		}
 
-		return json_encode(array('success' => true, 'result' => \App\Distance::getWhereIp($r->ip())));
+		return json_encode(array('success' => true, 'message' => \App\Distance::getWhereIp($r->ip())));
 	}    
 }

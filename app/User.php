@@ -31,4 +31,10 @@ class User extends Authenticatable
     {
         return $this->hasOne('App\City', 'city_id');
     }
+
+    public function times()
+    {
+        return $this->belongsToMany('App\Time');
+    }
+
 }
