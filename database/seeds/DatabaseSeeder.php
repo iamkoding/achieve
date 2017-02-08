@@ -12,15 +12,13 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
 
-    	factory(App\Mosque::class, 3)->create()->each(function ($u) {
-    		factory(App\Distance::class, 3)->create()->each(function($d) use ($u) {
-    			App\DistanceMosque::create([
-    				'distance_id' => $d->id,
-    				'mosque_id' => $u->id,
-    				'distance' => 1.2
-    			]);
-    		});
-	    });
+        $prayers = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
+
+        foreach($prayers as $prayer) {
+            \App\Prayer::create([
+                'name' => $prayer
+            ]);
+        }	
         // $this->call(UsersTableSeeder::class);
     	// factory(App\City::class, 5)->create();
     }

@@ -29,7 +29,7 @@ class User extends Authenticatable
 
     public function city() 
     {
-        return $this->hasOne('App\City', 'city_id');
+        return $this->hasOne('App\City', 'id');
     }
 
     public function times()

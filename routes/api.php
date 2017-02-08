@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,18 +11,14 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::resource('authenticate', 'AuthenticateController', ['only' => ['index']]);
 Route::post('authenticate', 'AuthenticateController@authenticate');
 
 
 Route::group(['middleware' => ['jwt.auth']] , function()
 {
-	Route::get('/timing/{city_id}/{prayer_id}', 'TimingController@store');
-	Route::get('/timing', 'TimingController@get');
+	Route::post('timing', 'TimingController@store');
+	Route::get('timing/{month}/{year}', 'TimingController@get');
 
-	Route::get('/distance/{lat}/{lng}', 'DistanceController@index');
+	Route::post('/distance', 'DistanceController@index');
 });

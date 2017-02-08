@@ -4,25 +4,28 @@ namespace App\Http\Controllers;
 
 use Log;
 use Distance;
+use Exception;
 use Illuminate\Http\Request;
 use App\Events\DistanceReceived;
-use Exception;
+use App\Distance as DistanceModel;
+use App\Http\Requests\GetDistanceRequest;
 
-class DistanceController extends Controller
+class DistanceController extends ApiController
 {
 	
-	public function index($lat, $lng, Request $r)
+	public function index(GetDistanceRequest $request)
 	{
-		$distances = \App\Distance::getWhereIp($r->ip());
+		$distances = DistanceModel::getWhereIp($request->ip());
+
 		if($distances->count()) {
-			return json_encode(array('success' => true, 'message' => $distances));
+			return $this->respondSuccessWithArray($distances);
 		}
 
 		try {
-			$distances = Distance::get($lat, $lng);
+			$distances = Distance::get($request->lat, $request->lng);
 
-			$distance = \App\Distance::create([
-				'ipaddress' => $r->ip()
+			$distance = DistanceModel::create([
+				'ipaddress' => $request->ip()
 			]);
 
 			foreach($distances as $mosque) {
@@ -30,10 +33,10 @@ class DistanceController extends Controller
 			}
 
 		} catch (Exception $e) {
-			return array('success' => false, 'message' => $e->getMessage());	
+			return $this->respondWithUserError($e->getMessage());	
 
 		}
 
-		return json_encode(array('success' => true, 'message' => \App\Distance::getWhereIp($r->ip())));
+		return $this->respondSuccessWithArray(DistanceModel::getWhereIp($request->ip()));
 	}    
 }

@@ -10,7 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-// Auth::login(App\User::first());
 
+Auth::login(App\User::first());
 
+Route::get('time/{month}/{year}', 'TimingController@get');
 

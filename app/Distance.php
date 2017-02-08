@@ -8,7 +8,11 @@ class Distance extends Model
 {
 
     protected $fillable = [
-    	'ipaddress', 'distance'
+    	'ipaddress'
+    ];
+
+    protected $hidden = [
+        'ipaddress'
     ];
 
     public function mosques()

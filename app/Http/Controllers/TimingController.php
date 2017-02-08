@@ -2,16 +2,52 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
+use Exception;
+use App\Time;
+use App\Prayer;
+use Service\Prayers\Times;
+use App\Events\TimeReceived;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreTimingRequest;
 
-class TimingController extends Controller
+class TimingController extends ApiController
 {
-	public function get()
+	public function get($month, $year)
 	{
-		dd(\Auth::user()->with(array('times', 'times.prayer','times.city'))->get());
+		//Validate parameters
+		$city_id = Auth::user()->city->id;
+		$times = Time::getWhereCityWith($city_id, $month, $year, ['prayer', 'users']);
+
+		if($times->count()) return $this->respondSuccessWithArray($times);	
+
+		try {
+			$times = Times::get($month, $year);
+			$prayers = Prayer::get();
+
+			foreach($times->items as $day) {
+				event(new TimeReceived($day, $prayers, $city_id));
+			}	
+
+			$times = Time::getWhereCityWith($city_id, $month, $year, ['prayer']);
+
+		} catch (Exception $e) {
+			return $this->respondInternalError('Unable to use this facilty at the moment, please try again later.');	
+		}
+
+		$x = $this->respondSuccessWithArray($times);
+		dd($sdlkf);
 	}
 
-	public function store($city_id, $prayer_id)
+	public function store(StoreTimingRequest $request)
+	{
+		if(Auth::user()->times()->sync([$request->time_id])) {
+			return $this->respondSuccessWithArray();
+		}
+		return $this->respondInternalError();	
+	}    
+
+	function when_validating_incoming_times() 
 	{
 		$time = new \App\Time;
 		$time_array = array(
@@ -27,11 +63,5 @@ class TimingController extends Controller
 		$time->city_id = $city_id;
 		$time->prayer_id = $prayer_id;
 		$time->datetime = \Carbon\Carbon::now();
-
-
-		if(\Auth::user()->times()->save($time)) {
-			return array('success' => true);
-		}
-		return array('success' => false, 'message' => 'Could not save at this time.');	
-	}    
+	}
 }

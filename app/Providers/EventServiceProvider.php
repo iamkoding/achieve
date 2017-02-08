@@ -16,6 +16,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\DistanceReceived' => [
             'App\Listeners\SaveDistance',
         ],
+        'App\Events\TimeReceived' => [
+            'App\Listeners\SaveTime',
+        ],
     ];
 
     /**

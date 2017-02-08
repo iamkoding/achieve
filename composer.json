@@ -22,7 +22,8 @@
         ],
         "psr-4": {
             "App\\": "app/",
-            "Service\\Mosque\\" : "app/Services/Mosque/"
+            "Service\\Mosque\\" : "app/Services/Mosque/",
+            "Service\\Prayers\\" : "app/Services/Prayers/"
         }
     },
     "autoload-dev": {
