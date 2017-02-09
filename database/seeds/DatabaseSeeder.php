@@ -19,6 +19,9 @@ class DatabaseSeeder extends Seeder
                 'name' => $prayer
             ]);
         }	
+        \App\City::create([
+            'name' => 'manchester'
+        ]);
         // $this->call(UsersTableSeeder::class);
     	// factory(App\City::class, 5)->create();
     }

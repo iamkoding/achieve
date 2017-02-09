@@ -11,14 +11,14 @@
 |
 */
 
-Route::resource('authenticate', 'AuthenticateController', ['only' => ['index']]);
-Route::post('authenticate', 'AuthenticateController@authenticate');
+Route::resource('authenticate', 'AuthenticateController', ['only' => ['store']]);
+Route::put('authenticate', 'AuthenticateController@authenticate');
 
 
 Route::group(['middleware' => ['jwt.auth']] , function()
 {
-	Route::post('timing', 'TimingController@store');
-	Route::get('timing/{month}/{year}', 'TimingController@get');
-
-	Route::post('/distance', 'DistanceController@index');
+	Route::resource('time', 'TimingController', ['only' => ['store','destroy']]);
+	Route::get('time/{month}/{year}', 'TimingController@get');
+	Route::post('distance', 'DistanceController@index');
+	Route::post('vibrate', 'SettingController@vibrate');
 });

@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use Hash;
 use JWTAuth;
-use Illuminate\Http\Request;
+use App\User;
+use App\Http\Requests\AuthenticateUserRequest;
+use App\Http\Requests\StoreUserRequest;
 use Tymon\JWTAuthExceptions\JWTException;
 
 class AuthenticateController extends ApiController
 {
   
-    public function authenticate(Request $request)
+    public function authenticate(AuthenticateUserRequest $request)
     {
         $credentials = $request->only('email', 'password');
 
@@ -19,7 +22,27 @@ class AuthenticateController extends ApiController
             }
 
         } catch (JWTException $e) {
-            return $this->respondInternalError('could_not_create_token');
+            return $this->respondInternalError('Could not create token, please try again later.');
+        }
+
+        return $this->respondSuccessWithArray([compact('token')]);
+    }
+
+    public function store(StoreUserRequest $request)
+    {
+        $input = $request->only('email', 'password', 'name', 'city_id', 'vibrate');
+        $input['password'] = Hash::make($input['password']);
+
+        try {
+            $user = User::create($input);
+            $credentials = $request->only('email', 'password');
+            $token = JWTAuth::attempt($credentials);
+
+        } catch (JWTException $e) {
+            return $this->respondInternalError('Could not create token, please try again later.');
+
+        } catch (Exception $e) {
+            return $this->respondInternalError('We have a system error. Please try again later.');
         }
 
         return $this->respondSuccessWithArray([compact('token')]);

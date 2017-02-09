@@ -4,18 +4,26 @@ namespace App\Http\Controllers;
 
 use Auth;
 use Exception;
+use Validator;
 use App\Time;
 use App\Prayer;
 use Service\Prayers\Times;
 use App\Events\TimeReceived;
 use Illuminate\Http\Request;
+use App\Http\Requests\GetTimingRequest;
 use App\Http\Requests\StoreTimingRequest;
 
 class TimingController extends ApiController
 {
-	public function get($month, $year)
+	public function get($month,$year)
 	{
-		//Validate parameters
+		$validator = Validator::make(array('month' => $month, 'year' => $year), [
+            'month' => 'required|numeric|max:2',
+            'year' => 'required|numeric|between:2013,2018',
+        ]);
+
+        if ($validator->fails()) return $this->respondWithUserError('Please correct the dates');
+
 		$city_id = Auth::user()->city->id;
 		$times = Time::getWhereCityWith($city_id, $month, $year, ['prayer', 'users']);
 
@@ -35,33 +43,25 @@ class TimingController extends ApiController
 			return $this->respondInternalError('Unable to use this facilty at the moment, please try again later.');	
 		}
 
-		$x = $this->respondSuccessWithArray($times);
-		dd($sdlkf);
+		return $this->respondSuccessWithArray($times);
 	}
 
 	public function store(StoreTimingRequest $request)
 	{
-		if(Auth::user()->times()->sync([$request->time_id])) {
-			return $this->respondSuccessWithArray();
+		Auth::user()->times()->sync([$request->time_id], false);
+		return $this->respondSuccessWithArray(array('Time saved' => true));
+	}
+
+	public function destroy($id)
+	{
+		$time = Time::getWithIdAndUser($id, Auth::user()->id);
+
+        if (!$time->users->count()) return $this->respondWithUserError('Time is not associated with user.');
+
+        if(Auth::user()->times()->detach($id)) {
+			return $this->respondSuccessWithArray(array('Time deleted' => true));
 		}
+
 		return $this->respondInternalError();	
 	}    
-
-	function when_validating_incoming_times() 
-	{
-		$time = new \App\Time;
-		$time_array = array(
-			'city_id' => $city_id,
-			'prayer_id' => $prayer_id,
-			'datetime' => \Carbon\Carbon::now()
-		);
-
-		if(!$time->validate($time_array)) {
-			return array('success' => false, 'message' => $time->errors());
-		}
-
-		$time->city_id = $city_id;
-		$time->prayer_id = $prayer_id;
-		$time->datetime = \Carbon\Carbon::now();
-	}
 }

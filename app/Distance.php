@@ -8,20 +8,20 @@ class Distance extends Model
 {
 
     protected $fillable = [
-    	'ipaddress'
+    	'lat','lng'
     ];
 
     protected $hidden = [
-        'ipaddress'
+        'lat','lng'
     ];
 
     public function mosques()
     {
-    	return $this->belongsToMany('App\Mosque')->withPivot('distance');
+    	return $this->belongsToMany('App\Mosque')->withPivot('distance')->select('mosques.id','name','address','city','postcode','telephone');
     }
 
-    public static function getWhereIp($ip)
+    public static function getWhereGeo($lat, $lng)
     {
-    	return Distance::whereIpaddress($ip)->with('mosques')->get();
+    	return Distance::whereLat($lat)->whereLng($lng)->with('mosques')->get();
     }
 }

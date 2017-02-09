@@ -15,7 +15,8 @@ class CreateDistanceTable extends Migration
     {
         Schema::create('distances', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('ipaddress');
+            $table->string('lat');
+            $table->string('lng');
             
             $table->timestamps();
             $table->softDeletes();

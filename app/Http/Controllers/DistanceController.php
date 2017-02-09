@@ -15,7 +15,7 @@ class DistanceController extends ApiController
 	
 	public function index(GetDistanceRequest $request)
 	{
-		$distances = DistanceModel::getWhereIp($request->ip());
+		$distances = DistanceModel::getWhereGeo($request->lat, $request->lng);
 
 		if($distances->count()) {
 			return $this->respondSuccessWithArray($distances);
@@ -25,7 +25,8 @@ class DistanceController extends ApiController
 			$distances = Distance::get($request->lat, $request->lng);
 
 			$distance = DistanceModel::create([
-				'ipaddress' => $request->ip()
+				'lat' => $request->lat,
+				'lng' => $request->lng
 			]);
 
 			foreach($distances as $mosque) {

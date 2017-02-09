@@ -2,11 +2,11 @@
 
 namespace App\Traits;
 
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 trait Response{
 
-	private $statusCode = Response::HTTP_OK;
+	private $statusCode = HttpResponse::HTTP_OK;
 
 	/**
 	 * @return int
@@ -75,7 +75,7 @@ trait Response{
 	 */
 	public function respondUnauthorizedRequest($message = "Unable to access resource")
 	{
-		return $this->respondWithError($message, Response::HTTP_UNAUTHORIZED);
+		return $this->respondWithError($message, HttpResponse::HTTP_UNAUTHORIZED);
 	}
 
 	/**
@@ -84,7 +84,7 @@ trait Response{
 	 */
 	public function respondInternalError($message = 'Internal Error, please try again later')
 	{
-		return $this->respondWithError($message, Response::HTTP_INTERNAL_SERVER_ERROR);
+		return $this->respondWithError($message, HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
 	}
 
 	/**
@@ -93,7 +93,7 @@ trait Response{
 	 */
 	public function respondBadRequest($message = 'Bad Request')
 	{
-		return $this->setStatusCode(Reponse::HTTP_NOT_FOUND)->respondWithError($message);
+		return $this->setStatusCode(HttpResponse::HTTP_NOT_FOUND)->respondWithError($message);
 	}
 
 	/**
@@ -111,7 +111,7 @@ trait Response{
 	 */
 	public function respondWithUserError($message)
 	{
-		return $this->respondWithError($message, Response::HTTP_NOT_ACCEPTABLE);	
+		return $this->respondWithError($message, HttpResponse::HTTP_NOT_ACCEPTABLE);	
 	}
 	
 	/**
@@ -120,7 +120,7 @@ trait Response{
 	 */
 	public function databaseSave($result)
 	{
-		if(!$result) return $this->respondWithError("Unable to save, please try again later", Response::HTTP_SERVICE_UNAVAILABLE);
+		if(!$result) return $this->respondWithError("Unable to save, please try again later", HttpResponse::HTTP_SERVICE_UNAVAILABLE);
 		return $this->respondWithSuccess($result);
 	}
 }

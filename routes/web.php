@@ -11,7 +11,7 @@
 |
 */
 
-Auth::login(App\User::first());
+// Auth::login(App\User::first());
 
-Route::get('time/{month}/{year}', 'TimingController@get');
+// Route::get('time/{month}/{year}', 'TimingController@get');
 

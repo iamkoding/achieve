@@ -9,4 +9,9 @@ class Prayer extends Model
     protected $fillable = [
     	'name'
     ];
+
+    public function time()
+    {
+    	return $this->belongsTo('App\Time');
+    }
 }
