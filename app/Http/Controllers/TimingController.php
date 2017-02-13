@@ -15,14 +15,15 @@ use App\Http\Requests\StoreTimingRequest;
 
 class TimingController extends ApiController
 {
+	/**
+	 * @var month int
+	 * @var year int
+	 * Attempt to get all times with the logged in user
+	 * If not exists then fires an api to retrieve all prayer times and then return
+	 */
 	public function get($month,$year)
 	{
-		$validator = Validator::make(array('month' => $month, 'year' => $year), [
-            'month' => 'required|numeric|max:2',
-            'year' => 'required|numeric|between:2013,2018',
-        ]);
-
-        if ($validator->fails()) return $this->respondWithUserError('Please correct the dates');
+        if ($this->validateGetRequest($month, $year)) return $this->respondWithUserError('Please correct the dates');
 
 		$city_id = Auth::user()->city->id;
 		$times = Time::getWhereCityWith($city_id, $month, $year, ['prayer', 'users']);
@@ -46,12 +47,19 @@ class TimingController extends ApiController
 		return $this->respondSuccessWithArray($times);
 	}
 
+	/**
+	 * Save a time and user relation
+	 */
 	public function store(StoreTimingRequest $request)
 	{
 		Auth::user()->times()->sync([$request->time_id], false);
 		return $this->respondSuccessWithArray(array('Time saved' => true));
 	}
 
+	/**
+	 * @var id int
+	 * Remove time and user relation
+	 */
 	public function destroy($id)
 	{
 		$time = Time::getWithIdAndUser($id, Auth::user()->id);
@@ -64,4 +72,19 @@ class TimingController extends ApiController
 
 		return $this->respondInternalError();	
 	}    
+
+	/**
+	 * @var month int
+	 * @var year int
+	 * Validates month and year are valid
+	 */
+	public function validateGetRequest($month, $year) 
+	{
+		$validator = Validator::make(array('month' => $month, 'year' => $year), [
+            'month' => 'required|numeric|max:2',
+            'year' => 'required|numeric|between:2013,2018',
+        ]);
+
+        return $validator->fails();
+	}
 }

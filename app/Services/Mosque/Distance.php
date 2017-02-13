@@ -10,6 +10,11 @@ class Distance {
 	const INVALID_KEY2 = 'Token Key Missing !';
 	const INVALID_PARAMS = 'Invalid Parameters';
 
+	/**
+	 * @var lat float
+	 * @var lng float
+	 * Fire api to ummahnet to get closest mosques
+	 */
 	public static function get($lat, $lng)
 	{
 		$token = Config::get('ummah.key');

@@ -12,6 +12,11 @@ use Tymon\JWTAuthExceptions\JWTException;
 class AuthenticateController extends ApiController
 {
   
+    /**
+     * @var email string
+     * @var password string
+     * Attempt a JWT web token request    
+     */
     public function authenticate(AuthenticateUserRequest $request)
     {
         $credentials = $request->only('email', 'password');
@@ -28,6 +33,14 @@ class AuthenticateController extends ApiController
         return $this->respondSuccessWithArray([compact('token')]);
     }
 
+    /**
+     * @var email string
+     * @var password string
+     * @var name string
+     * @var city_id int
+     * @var vibrate int
+     * Attempt to save a new user and give back a jwt web token
+     */
     public function store(StoreUserRequest $request)
     {
         $input = $request->only('email', 'password', 'name', 'city_id', 'vibrate');

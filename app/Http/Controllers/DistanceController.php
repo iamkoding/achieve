@@ -13,6 +13,10 @@ use App\Http\Requests\GetDistanceRequest;
 class DistanceController extends ApiController
 {
 	
+	/**
+	 * Retrieves all mosques if a geo location is found in the database.
+	 * Else fire api to retrieve closest mosques
+	 */
 	public function index(GetDistanceRequest $request)
 	{
 		$distances = DistanceModel::getWhereGeo($request->lat, $request->lng);
