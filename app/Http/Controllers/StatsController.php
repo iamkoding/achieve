@@ -10,30 +10,33 @@ use Service\Stats\Data;
 
 class StatsController extends ApiController
 {
+	/**
+	 * Get stats for user between certain times
+	 * @var mf int
+	 * @var yf int
+	 * @var mt int
+	 * @var mt int
+	 * @return array
+	 */
     public function get($mf, $yf, $mt, $yt)
     {
     	if ($this->validateRequest($mf, $yf, $mt, $yt)) return $this->respondWithUserError('Please correct the dates');
 
-    	$first = Auth::user()->times()->first()->created_at->startOfMonth();
+    	$time = Auth::user()->times()->first();
+    	if($time === null) return $this->respondWithUserError('No data available.');
+
+    	$first = $time->created_at->startOfMonth();
     	$start = Carbon::create($yf, $mf, 1, 0, 0, 0)->startofMonth();
     	$end = Carbon::create($yt, $mt, 1, 0, 0, 0)->endofMonth();
 
     	if($first > $start) return $this->respondWithUserError('No data available.');
 
-  //   	$redis = Redis::connection();
-  //   	$redis_name = Auth::user()->email.$mf.$mt;
-		// $stats = $redis->get($redis_name);
-		// if($stats != null) return $this->respondSuccessWithArray(json_decode($stats));
-
 		$days = $end->diffInDays($start);
 		$days++;
-		$user = Auth::user()->with(array('times' => function($q) use ($start, $end) {
-			$q->where('created_at', '>', $start)->where('created_at', '<', $end);
-		}, 'times.prayer'))->first();	
+		$user = $this->getTimesBetweenDates($start, $end);	
 
 		$data = new Data();
 		$stats = $data->get($user->times, $days);
-		// $redis->set($redis_name, json_encode($stats));
 
 		return $this->respondSuccessWithArray($stats);
     }
@@ -43,7 +46,7 @@ class StatsController extends ApiController
 	 * @var year int
 	 * Validates month and year are valid
 	 */
-	public function validateRequest($mf, $yf, $mt, $yt) 
+	private function validateRequest($mf, $yf, $mt, $yt) 
 	{
 		$validator = Validator::make(array('mf' => $mf, 'yf' => $yf, 'mt' => $mt, 'yt' => $yt), [
             'mf' => 'required|numeric|max:2',
@@ -54,4 +57,17 @@ class StatsController extends ApiController
 
         return $validator->fails();
 	}
+
+	/**
+	 * Return times between dates
+	 * @var start Carbon date
+	 * @var end Carbon date
+	 * @return array
+	 */
+    private function getTimesBetweenDates($start, $end)
+    {
+        return Auth::user()->with(array('times' => function($q) use ($start, $end) {
+            $q->where('created_at', '>', $start)->where('created_at', '<', $end);
+        }, 'times.prayer'))->first();
+    }
 }

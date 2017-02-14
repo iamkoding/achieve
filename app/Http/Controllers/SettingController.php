@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Auth;
 use Hash;
 use Exception;
+use App\City;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateCitySettingRequest;
 use App\Http\Requests\UpdatePasswordSettingRequest;
@@ -60,5 +61,20 @@ class SettingController extends ApiController
     	} catch (Exception $e) {
     		return $this->respondInternalError();
     	}
+    }
+
+    /**
+     * Gets all cities and related logged in user.
+     */
+    public function get()
+    {   
+        try {
+            $cities = City::getCitiesWithUser(Auth::user()->id);
+        } catch (Exception $e) {
+            return $this->respondInternalError();
+        }
+        
+        return $this->respondSuccessWithArray();
+
     }
 }

@@ -24,7 +24,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'deleted_at',
     ];
 
     public function city() 
@@ -36,5 +36,4 @@ class User extends Authenticatable
     {
         return $this->belongsToMany('App\Time');
     }
-
 }

@@ -11,5 +11,6 @@
 |
 */
 
-// Auth::login(App\User::first());
-
+Route::get('/', function() {
+	return View::make('index'); 
+});
