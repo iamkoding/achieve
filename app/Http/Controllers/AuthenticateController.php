@@ -30,7 +30,7 @@ class AuthenticateController extends ApiController
             return $this->respondInternalError('Could not create token, please try again later.');
         }
 
-        return $this->respondSuccessWithArray([compact('token')]);
+        return $this->respondSuccessWithArray(compact('token'));
     }
 
     /**
