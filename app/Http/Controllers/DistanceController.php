@@ -42,6 +42,6 @@ class DistanceController extends ApiController
 
 		}
 
-		return $this->respondSuccessWithArray(DistanceModel::getWhereIp($request->ip()));
+		return $this->respondSuccessWithArray(DistanceModel::getWhereGeo($request->lat, $request->lng));
 	}    
 }

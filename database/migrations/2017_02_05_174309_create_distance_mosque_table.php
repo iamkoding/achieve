@@ -15,7 +15,7 @@ class CreateDistanceMosqueTable extends Migration
     {
         Schema::create('distance_mosque', function (Blueprint $table) {
             $table->increments('id');
-            $table->float('distance', 2,1);
+            $table->decimal('distance', 4,2);
 
             $table->integer('distance_id')->unsigned();
             $table->foreign('distance_id')->references('id')->on('distances')->onDelete('cascade');

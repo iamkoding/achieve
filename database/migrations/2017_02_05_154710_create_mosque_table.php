@@ -18,7 +18,7 @@ class CreateMosqueTable extends Migration
             $table->string('name');
             $table->string('address');
             $table->string('city');
-            $table->string('postcode', 8);
+            $table->string('postcode', 10);
             $table->string('telephone', 20);
             $table->timestamps();
             $table->softDeletes();

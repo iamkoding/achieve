@@ -23,7 +23,7 @@ class AuthenticateController extends ApiController
 
         try {
             if (! $token = JWTAuth::attempt($credentials)) {
-                return $this->respondUnauthorizedRequest('Invalid credentials');
+                return $this->responseWithError('Invalid credentials');
             }
 
         } catch (JWTException $e) {
