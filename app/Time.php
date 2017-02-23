@@ -30,9 +30,9 @@ class Time extends Model
         return $this->belongsToMany('App\User')->select('name');
     }
 
-    public static function getWhereCityWith($city_id, $month, $year, array $with)
+    public static function getWhereCityWith($city_id, $month, $year)
     {
-        return Time::whereCityId($city_id)->where(DB::raw('MONTH(datetime)'),'=', $month)->where(DB::raw('YEAR(datetime)'),'=', $year)->with($with)->get();
+        return Time::whereCityId($city_id)->where(DB::raw('MONTH(datetime)'),'=', $month)->where(DB::raw('YEAR(datetime)'),'=', $year)->with('prayer')->get();
     }
 
     public static function getWithIdAndUser($id, $user_id)

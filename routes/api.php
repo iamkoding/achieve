@@ -23,6 +23,7 @@ Route::group(['middleware' => ['jwt.auth']] , function()
 {
 	Route::resource('time', 'TimingController', ['only' => ['store','destroy']]);
 	Route::get('time/{month}/{year}', 'TimingController@get');
+	Route::get('saves/{month}/{year}', 'TimingController@saves');
 	Route::post('distance', 'DistanceController@index');
 	Route::get('cities', 'SettingController@get');
 	Route::post('change-vibrate', 'SettingController@updateVibrate');

@@ -6,6 +6,7 @@ use Auth;
 use Exception;
 use Validator;
 use App\Time;
+use App\User;
 use App\Prayer;
 use Service\Prayers\Times;
 use App\Events\TimeReceived;
@@ -25,8 +26,7 @@ class TimingController extends ApiController
 	{
         if ($this->validateGetRequest($month, $year)) return $this->respondWithUserError('Please correct the dates');
 
-		$city_id = Auth::user()->city->id;
-		$times = Time::getWhereCityWith($city_id, $month, $year, ['prayer', 'users']);
+		$times = Time::getWhereCityWith(Auth::user()->city_id, $month, $year);
 
 		if($times->count()) return $this->respondSuccessWithArray($times);	
 
@@ -47,11 +47,22 @@ class TimingController extends ApiController
 		return $this->respondSuccessWithArray($times);
 	}
 
+	public function saves($month, $year)
+	{
+		if ($this->validateGetRequest($month, $year)) return $this->respondWithUserError('Please correct the dates');
+		$times = User::getSavesForMonth($month, $year, Auth::user()->id);
+		return $this->respondSuccessWithArray($times);
+	}
+
 	/**
 	 * Save a time and user relation
 	 */
-	public function store(StoreTimingRequest $request)
+	public function store(Request $request)
 	{
+		if(!$this->removeAllAssociatedTimes($request->get('time_id'))) {
+			return $this->respondWithUserError('Time does not exist.');
+		}
+
 		Auth::user()->times()->sync([$request->time_id], false);
 		return $this->respondSuccessWithArray(array('Time saved' => true));
 	}
@@ -62,16 +73,30 @@ class TimingController extends ApiController
 	 */
 	public function destroy($id)
 	{
-		$time = Time::getWithIdAndUser($id, Auth::user()->id);
-
-        if (!$time->users->count()) return $this->respondWithUserError('Time is not associated with user.');
-
-        if(Auth::user()->times()->detach($id)) {
-			return $this->respondSuccessWithArray(array('Time deleted' => true));
+		if(!$this->removeAllAssociatedTimes($id)) {
+			return $this->respondWithUserError('Time does not exist.');
 		}
-
-		return $this->respondInternalError();	
+		return $this->respondSuccessWithArray(array('Time deleted' => true));
 	}    
+
+	/**
+	 * @var time_id int
+	 * @return bool
+	 * Delete all associated times from a time with related prayer.
+	 */
+	private function removeAllAssociatedTimes($time_id) 
+	{
+		$time = Time::whereId($time_id)->first();
+
+		if(!$time->count()) return false;
+
+		$user = User::getAllTimesFromDatetime($time->datetime, Auth::user()->id, $time->prayer_id);
+
+		foreach($user->times as $time) {
+			Auth::user()->times()->detach($time->id);
+		}	
+		return true;
+	}
 
 	/**
 	 * @var month int
