@@ -38,7 +38,7 @@ class TimingController extends ApiController
 				event(new TimeReceived($day, $prayers, $city_id));
 			}	
 
-			$times = Time::getWhereCityWith($city_id, $month, $year, ['prayer']);
+			$times = Time::getWhereCityWith($city_id, $month, $year);
 
 		} catch (Exception $e) {
 			return $this->respondInternalError('Unable to use this facilty at the moment, please try again later.');	
