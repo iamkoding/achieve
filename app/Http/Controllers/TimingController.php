@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Auth;
 use Exception;
 use Validator;
+use App\City;
 use App\Time;
 use App\User;
 use App\Prayer;
@@ -26,12 +27,14 @@ class TimingController extends ApiController
 	{
         if ($this->validateGetRequest($month, $year)) return $this->respondWithUserError('Please correct the dates');
 
-		$times = Time::getWhereCityWith(Auth::user()->city_id, $month, $year);
+        $city_id = Auth::user()->city_id;
+		$times = Time::getWhereCityWith($city_id, $month, $year);
 
 		if($times->count()) return $this->respondSuccessWithArray($times);	
 
 		try {
-			$times = Times::get($month, $year);
+			$city = City::whereId($city_id)->first();
+			$times = Times::get($city->name, $month, $year);
 			$prayers = Prayer::get();
 
 			foreach($times->items as $day) {

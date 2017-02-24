@@ -11,11 +11,11 @@ class Times {
 	 * @var year int
 	 * Fire api and retrieve results, results->status_code will be 0 if something is wrong
 	 */
-	public static function get($month, $year) 
+	public static function get($city, $month, $year) 
 	{
 		$token = Config::get('salat.key');
 
-		$url = "http://muslimsalat.com/manchester/monthly/01-$month-$year/true.json?key=$token";
+		$url = "http://muslimsalat.com/$city/monthly/01-$month-$year/true.json?key=$token";
 		$result = json_decode(file_get_contents($url));
 		
 		if(!$result->status_code) {
