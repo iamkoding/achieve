@@ -15,13 +15,13 @@ class Times {
 	{
 		$token = Config::get('salat.key');
 
-		$url = "http://muslimsalat.com/manchester/monthly/01-$month-$year/true.json?key=$token";
+		$url = "https://muslimsalat.com/manchester/monthly/01-$month-$year/true.json?key=$token";
 		$result = json_decode(file_get_contents($url));
 		
-		if(!$result->status_code) {
-			throw new TimesParamException($result->status_error->invalid_query);
-		} else if($result === null) {
+		if($result === null) {
 			throw new TimesNullException($url);
+		} else if(!$result->status_code) {
+			throw new TimesParamException($result->status_error->invalid_query);
 		}
 
 		return $result;

@@ -43,7 +43,7 @@ class User extends Authenticatable
     {
         return User::whereId($user_id)->select('id')->with(array('times' => function($q) use ($month, $year) {
             $q->where(DB::raw('MONTH(datetime)'),'=', $month)->where(DB::raw('YEAR(datetime)'),'=', $year)->select('times.id', 'datetime', 'prayer_id');
-        }))->get();
+        }, 'times.prayer'))->get();
     }
 
     public static function getAllTimesFromDatetime($datetime, $user_id, $prayer_id)
