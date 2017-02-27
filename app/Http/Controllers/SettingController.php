@@ -74,7 +74,7 @@ class SettingController extends ApiController
             return $this->respondInternalError();
         }
         
-        return $this->respondSuccessWithArray();
+        return $this->respondSuccessWithArray($cities);
 
     }
 }
