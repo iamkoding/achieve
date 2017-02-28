@@ -26,8 +26,8 @@ class UpdatePasswordSettingRequest extends FormRequest
     public function rules()
     {
         return [
-            'new_password' => 'required|regex:/^[\w-]*$/',
-            'password' => 'required|regex:/^[\w-]*$/'
+            'new_password' => 'required|regex:/^[\w-]*$/|min:8',
+            'password' => 'required|regex:/^[\w-]*$/|min:8'
         ];
     }
 

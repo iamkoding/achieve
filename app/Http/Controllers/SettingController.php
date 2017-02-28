@@ -52,7 +52,7 @@ class SettingController extends ApiController
     	try {
     		$user = Auth::user();
     		if(Hash::check($request->password, $user->password)) {
-    			$user->password = Hash::make($request->password);
+    			$user->password = Hash::make($request->new_password);
     			$user->save();
 		    	return $this->respondSuccessWithArray(array('success' => true));
 			}
