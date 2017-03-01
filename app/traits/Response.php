@@ -91,9 +91,27 @@ trait Response{
 	 * @param string $message
 	 * @return mixed
 	 */
+	public function respondNotFoundRequest($message = 'Not Found')
+	{
+		return $this->respondWithError($message, HttpResponse::HTTP_NOT_FOUND);
+	}
+
+	/**
+	 * @param string $message
+	 * @return mixed
+	 */
 	public function respondBadRequest($message = 'Bad Request')
 	{
-		return $this->setStatusCode(HttpResponse::HTTP_NOT_FOUND)->respondWithError($message);
+		return $this->respondWithError($message, HttpResponse::HTTP_BAD_REQUEST);
+	}
+
+	/**
+	 * @param string $message
+	 * @return mixed
+	 */
+	public function respondNoRange($message = 'Range not satisfiable')
+	{
+		return $this->respondWithError($message, HttpResponse::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE);
 	}
 
 	/**

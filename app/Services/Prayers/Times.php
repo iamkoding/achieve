@@ -20,6 +20,8 @@ class Times {
 		
 		if($result === null) {
 			throw new TimesNullException($url);
+		} else if($result->status_code === 101) {
+			throw new TimesDatesException($url, $result->status_error->invalid_date);
 		} else if(!$result->status_code) {
 			throw new TimesParamException($result->status_error->invalid_query);
 		}

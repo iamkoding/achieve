@@ -49,8 +49,8 @@ class StatsController extends ApiController
 	private function validateRequest($mf, $yf, $mt, $yt) 
 	{
 		$validator = Validator::make(array('mf' => $mf, 'yf' => $yf, 'mt' => $mt, 'yt' => $yt), [
-            'mf' => 'required|numeric|max:2',
-            'mt' => 'required|numeric|max:2',
+            'mf' => 'required|numeric|between:1,12',
+            'mt' => 'required|numeric|between:1,12',
             'yf' => 'required|numeric|between:2013,2018',
             'yt' => 'required|numeric|between:2013,2018',
         ]);

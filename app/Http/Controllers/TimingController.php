@@ -13,6 +13,7 @@ use Service\Prayers\Times;
 use App\Events\TimeReceived;
 use Illuminate\Http\Request;
 use App\Http\Requests\GetTimingRequest;
+use Service\Prayers\TimesDatesException;
 use App\Http\Requests\StoreTimingRequest;
 
 class TimingController extends ApiController
@@ -43,6 +44,8 @@ class TimingController extends ApiController
 
 			$times = Time::getWhereCityWith($city_id, $month, $year);
 
+		} catch (TimesDatesException $e) {
+			return $this->respondNoRange('Time table not available');	
 		} catch (Exception $e) {
 			return $this->respondInternalError('Unable to use this facilty at the moment, please try again later.');	
 		}
@@ -109,7 +112,7 @@ class TimingController extends ApiController
 	public function validateGetRequest($month, $year) 
 	{
 		$validator = Validator::make(array('month' => $month, 'year' => $year), [
-            'month' => 'required|numeric|max:2',
+            'month' => 'required|numeric|between:1,12',
             'year' => 'required|numeric|between:2013,2018',
         ]);
 
