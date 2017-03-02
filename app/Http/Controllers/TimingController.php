@@ -109,7 +109,7 @@ class TimingController extends ApiController
 	 * @var year int
 	 * Validates month and year are valid
 	 */
-	public function validateGetRequest($month, $year) 
+	private function validateGetRequest($month, $year) 
 	{
 		$validator = Validator::make(array('month' => $month, 'year' => $year), [
             'month' => 'required|numeric|between:1,12',
