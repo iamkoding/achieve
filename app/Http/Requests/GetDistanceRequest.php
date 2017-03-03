@@ -33,6 +33,6 @@ class GetDistanceRequest extends FormRequest
 
     public function response(array $array)
     {
-        return $this->respondWithUserError('Geo location is incorrect.');
+        return $this->respondWithUserError('Somethings not quite right about this location. Please try somewhere else.');
     }
 }

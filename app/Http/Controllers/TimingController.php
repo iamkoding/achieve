@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use Auth;
 use Exception;
 use Validator;
@@ -45,7 +46,7 @@ class TimingController extends ApiController
 			$times = Time::getWhereCityWith($city_id, $month, $year);
 
 		} catch (TimesDatesException $e) {
-			return $this->respondNoRange('Time table not available');	
+			return $this->respondNoRange("We're unable to provide times for these dates at this present time. Please check back in the future.");	
 		} catch (Exception $e) {
 			return $this->respondInternalError('Unable to use this facilty at the moment, please try again later.');	
 		}
@@ -65,11 +66,14 @@ class TimingController extends ApiController
 	 */
 	public function store(Request $request)
 	{
-		if(!$this->removeAllAssociatedTimes($request->get('time_id'))) {
-			return $this->respondWithUserError('Time does not exist.');
+		try {
+			$this->removeAllAssociatedTimes($request->get('time_id'));
+			Auth::user()->times()->sync([$request->time_id], false);
+		} catch (Exception $e) {
+			Log::alert("Timing Controller => save time with id: $request->time_id and user id ". Auth::user()->id);
+			return $this->respondWithUserError('We are experiencing difficulties saving this time. An admin has been notified, please try again later...');
 		}
-
-		Auth::user()->times()->sync([$request->time_id], false);
+		
 		return $this->respondSuccessWithArray(array('Time saved' => true));
 	}
 
@@ -79,8 +83,11 @@ class TimingController extends ApiController
 	 */
 	public function destroy($id)
 	{
-		if(!$this->removeAllAssociatedTimes($id)) {
-			return $this->respondWithUserError('Time does not exist.');
+		try {
+			$this->removeAllAssociatedTimes($id);
+		} catch(Exception $e) {
+			Log::alert("Timing Controller => destroy time with id: $id and user id ". Auth::user()->id);
+			return $this->respondWithUserError('We are experiencing difficulties deleting this time. An admin has been notified, please try again later...');
 		}
 		return $this->respondSuccessWithArray(array('Time deleted' => true));
 	}    
@@ -93,8 +100,6 @@ class TimingController extends ApiController
 	private function removeAllAssociatedTimes($time_id) 
 	{
 		$time = Time::whereId($time_id)->first();
-
-		if(!$time->count()) return false;
 
 		$user = User::getAllTimesFromDatetime($time->datetime, Auth::user()->id, $time->prayer_id);
 
@@ -113,7 +118,7 @@ class TimingController extends ApiController
 	{
 		$validator = Validator::make(array('month' => $month, 'year' => $year), [
             'month' => 'required|numeric|between:1,12',
-            'year' => 'required|numeric|between:2013,2018',
+            'year' => 'required|numeric|between:2017,2026',
         ]);
 
         return $validator->fails();

@@ -56,7 +56,7 @@ class SettingController extends ApiController
     			$user->save();
 		    	return $this->respondSuccessWithArray(array('success' => true));
 			}
-			return $this->respondWithUserError('Incorrect password.');
+			return $this->respondIncorrectCredentails('Incorrect password entered. Please try again.');
 
     	} catch (Exception $e) {
     		return $this->respondInternalError();

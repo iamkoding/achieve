@@ -82,6 +82,15 @@ trait Response{
 	 * @param string $message
 	 * @return mixed
 	 */
+	public function respondIncorrectCredentails($message = "Incorrect Credentails")
+	{
+		return $this->respondWithError($message, HttpResponse::HTTP_FORBIDDEN);
+	}
+
+	/**
+	 * @param string $message
+	 * @return mixed
+	 */
 	public function respondInternalError($message = 'Internal Error, please try again later')
 	{
 		return $this->respondWithError($message, HttpResponse::HTTP_INTERNAL_SERVER_ERROR);

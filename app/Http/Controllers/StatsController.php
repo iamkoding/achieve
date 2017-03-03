@@ -23,7 +23,7 @@ class StatsController extends ApiController
     	if ($this->validateRequest($mf, $yf, $mt, $yt)) return $this->respondWithUserError('Please correct the dates');
 
     	$time = Auth::user()->times()->first();
-    	if($time === null) return $this->respondWithUserError('No data available.');
+    	if($time === null) return $this->respondWithUserError("You don't have any stats available for this month yet. Please try again later...");
 
     	$first = $time->created_at->startOfMonth();
     	$start = Carbon::create($yf, $mf, 1, 0, 0, 0)->startofMonth();
@@ -51,8 +51,8 @@ class StatsController extends ApiController
 		$validator = Validator::make(array('mf' => $mf, 'yf' => $yf, 'mt' => $mt, 'yt' => $yt), [
             'mf' => 'required|numeric|between:1,12',
             'mt' => 'required|numeric|between:1,12',
-            'yf' => 'required|numeric|between:2013,2018',
-            'yt' => 'required|numeric|between:2013,2018',
+            'yf' => 'required|numeric|between:2017,2026',
+            'yt' => 'required|numeric|between:2017,2026',
         ]);
 
         return $validator->fails();

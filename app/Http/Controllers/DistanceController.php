@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Events\DistanceReceived;
 use App\Distance as DistanceModel;
 use App\Http\Requests\GetDistanceRequest;
+use Service\Mosque\DistanceEmptyException;
 
 class DistanceController extends ApiController
 {
@@ -37,9 +38,10 @@ class DistanceController extends ApiController
 				event(new DistanceReceived($mosque, $distance));
 			}
 
+		} catch (DistanceEmptyException $e) {
+			return $this->respondWithUserError('Unable to find anything near you. Please try a different location.');	
 		} catch (Exception $e) {
-			return $this->respondWithUserError($e->getMessage());	
-
+			return $this->respondWithInternalError();	
 		}
 
 		return $this->respondSuccessWithArray(DistanceModel::getWhereGeo($request->lat, $request->lng));
