@@ -77,4 +77,19 @@ class SettingController extends ApiController
         return $this->respondSuccessWithArray($cities);
 
     }
+
+    /**
+     * Gets all cities.
+     */
+    public function cities()
+    {   
+        try {
+            $cities = City::get();
+        } catch (Exception $e) {
+            return $this->respondInternalError();
+        }
+        
+        return $this->respondSuccessWithArray($cities);
+
+    }
 }

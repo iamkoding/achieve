@@ -20,16 +20,17 @@ class StatsController extends ApiController
 	 */
     public function get($mf, $yf, $mt, $yt)
     {
-    	if ($this->validateRequest($mf, $yf, $mt, $yt)) return $this->respondWithUserError('Please correct the dates');
+    	if ($this->validateRequest($mf, $yf, $mt, $yt)) return $this->respondNoRange('Unfortunately we have no data for this time period.');
 
     	$time = Auth::user()->times()->first();
+    	
     	if($time === null) return $this->respondWithUserError("You don't have any stats available for this month yet. Please try again later...");
 
     	$first = $time->created_at->startOfMonth();
     	$start = Carbon::create($yf, $mf, 1, 0, 0, 0)->startofMonth();
     	$end = Carbon::create($yt, $mt, 1, 0, 0, 0)->endofMonth();
 
-    	if($first > $start) return $this->respondWithUserError('No data available.');
+    	if($first > $start) return $this->respondWithUserError('There are no stats available for this month.');
 
 		$days = $end->diffInDays($start);
 		$days++;

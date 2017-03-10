@@ -58,6 +58,6 @@ class AuthenticateController extends ApiController
             return $this->respondInternalError('We have a system error. Please try again later.');
         }
 
-        return $this->respondSuccessWithArray([compact('token')]);
+        return $this->respondSuccessWithArray(compact('token'));
     }
 }

@@ -17,6 +17,7 @@ header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Author
 
 Route::resource('authenticate', 'AuthenticateController', ['only' => ['store']]);
 Route::put('authenticate', 'AuthenticateController@authenticate');
+Route::get('cities', 'SettingController@cities');
 
 
 Route::group(['middleware' => ['jwt.auth']] , function()
@@ -25,7 +26,7 @@ Route::group(['middleware' => ['jwt.auth']] , function()
 	Route::get('time/{month}/{year}', 'TimingController@get');
 	Route::get('saves/{month}/{year}', 'TimingController@saves');
 	Route::post('distance', 'DistanceController@index');
-	Route::get('cities', 'SettingController@get');
+	Route::get('settings', 'SettingController@get');
 	Route::post('change-vibrate', 'SettingController@updateVibrate');
 	Route::post('change-city', 'SettingController@updateCity');
 	Route::post('change-password', 'SettingController@updatePassword');
